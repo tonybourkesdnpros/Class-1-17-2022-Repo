@@ -1,0 +1,14 @@
+--- 
+  - hosts: leafs_DC1, leafs_DC2
+    name: Add VLANs to leafs
+    tasks:
+    - name: Create VLANs
+      eos_vlans: 
+        config:
+        - vlan_id: "{{ item }}"
+          state: active
+        state: merged
+      loop:
+        - 4000
+        - 4001
+        - 4002        

@@ -1,0 +1,16 @@
+---
+  - hosts: leafs_DC1, leafs_DC2, spines_DC1, spines_DC2
+    name: Generate interface configuration for devices
+    tasks:
+      - name: Load variables into Ansible/Jinja Dictionary
+        include_vars:
+          file: "{{lookup('env','PWD')}}/vars/underlay.yml"
+          name: underlay
+      - name: Generate configuration
+        template:
+          src: "{{lookup('env','PWD')}}/templates/interfaces.j2"
+          dest: "{{lookup('env','PWD')}}/configs/{{ inventory_hostname }}_interfaces.eos"
+      - name: Upload configs
+        eos_config:
+          src: "{{lookup('env','PWD')}}/configs/{{ inventory_hostname }}_interfaces.eos"
+          save_when: always

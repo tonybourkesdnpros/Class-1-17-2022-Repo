@@ -1,0 +1,18 @@
+---
+  - hosts: leaf1-DC1
+    name: Generate management interface configuration for devices
+    tasks:
+      - name: Load variables into Ansible/Jinja Dictionary
+        include_vars:
+          file: "{{lookup('env','PWD')}}/vars/mgmt.yml"
+          name: mgmt
+      - name: Generate configuration
+        template:
+          src: "{{lookup('env','PWD')}}/templates/mgmt_interfaces.j2"
+          dest: "{{lookup('env','PWD')}}/configs/{{ inventory_hostname }}_mgmt.eos"
+
+
+
+
+
+          

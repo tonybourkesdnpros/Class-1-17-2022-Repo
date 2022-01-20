@@ -1,0 +1,20 @@
+---
+  - hosts: leafs_DC1, leafs_DC2
+    name: Generate underlay for leafs
+    tasks:
+      - name: Load variables into Ansible/Jinja Dictionary
+        include_vars:
+          file: "{{lookup('env','PWD')}}/vars/underlay.yml"
+          name: underlay
+      - name: Create switch config directory
+        file:
+          path: "{{lookup('env','PWD')}}/configs/{{inventory_hostname}}"
+          state: directory
+      - name: Generate configuration
+        template:
+          src: "{{lookup('env','PWD')}}/templates/underlay_leafs.j2"
+          dest: "{{lookup('env','PWD')}}/configs/{{ inventory_hostname}}/{{ inventory_hostname }}_underlay.eos"
+      - name: Upload configs
+        eos_config:
+          src: "{{lookup('env','PWD')}}/configs/{{ inventory_hostname}}/{{ inventory_hostname }}_underlay.eos"
+          save_when: always

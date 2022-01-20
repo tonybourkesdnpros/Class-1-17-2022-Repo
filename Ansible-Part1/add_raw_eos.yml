@@ -1,0 +1,10 @@
+---
+- hosts: leaf2-DC2
+  name: Raw EOS commands
+  tasks:
+    - name: Add a few commands
+      eos_command: 
+        commands:
+          - configure
+          - interface loopback98
+          - ip address 88.88.88.88/32

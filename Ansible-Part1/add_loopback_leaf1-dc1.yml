@@ -1,0 +1,7 @@
+---
+  - hosts: leaf1-DC1
+    name: Add a loopback
+    tasks:
+    - name: Add loopback
+      eos_config:
+        src: lo0-leaf1-DC1.cfg

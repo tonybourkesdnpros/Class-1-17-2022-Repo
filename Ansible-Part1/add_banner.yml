@@ -1,0 +1,18 @@
+---
+  - hosts: leafs_DC1, leafs_DC2
+    name: Add banner for leafs in leafs_DC1
+    tasks:
+      - name: Configure banner
+        eos_banner:
+          banner: login
+          text: "No matter where you go, there you are"
+          state: absent
+  - hosts: spines_DC1, spines_DC2
+    name: Add banner to spines
+    tasks:
+      - name: Configure banner
+        eos_config:
+          lines: 
+          - "No matter where you go, there you are"
+          - EOF
+          parents: banner login

@@ -1,0 +1,7 @@
+---
+  - hosts: leafs_DC1, leafs_DC2
+    name: Add VLANs from vlans.eos file
+    tasks:
+      - name: Read file and add VLANs
+        eos_config:
+          src: vlans.eos

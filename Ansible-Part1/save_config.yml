@@ -1,0 +1,9 @@
+---
+  - hosts: all
+    name: Save config
+    tasks:
+      - name: Save config via copy run start
+        eos_command: 
+          commands:
+            - copy run start
+            

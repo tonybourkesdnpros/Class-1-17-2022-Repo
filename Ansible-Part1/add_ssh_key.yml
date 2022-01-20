@@ -1,0 +1,16 @@
+---
+  - hosts: spine1-DC1
+    name: Add SSH key and user
+    tasks: 
+    - name: Add user
+      eos_user:
+        name: automator
+        nopassword: yes
+        privilege: 15
+        role: network-admin
+        state: present
+    # - name: Add SSH key
+    #   eos_user:
+    #     name: automator
+    #     sshkey: "{{ lookup('file', '~/project/persist/SSH/AutomationKey.public') }}"
+    #     state: present
