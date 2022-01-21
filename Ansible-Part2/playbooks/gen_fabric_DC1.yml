@@ -1,0 +1,96 @@
+---
+  - hosts: DC1
+    name: Generate all (spines/leafs) configs
+    tasks:
+      - name: Register variables (underlay)
+        include_vars:
+          file: "{{lookup('env','PWD')}}/vars/underlay.yml"
+          name: underlay
+      - name: Load variables into Ansible/Jinja Dictionary
+        include_vars:
+          file: "{{lookup('env','PWD')}}/vars/mgmt.yml"
+          name: mgmt
+
+      - name: Create config directory
+        file:
+          path: "{{lookup('env','PWD')}}/configs/{{inventory_hostname}}"
+          state: directory
+
+      - name: Remove file (delete file)
+        file:
+          path: "{{lookup('env','PWD')}}/configs/{{inventory_hostname}}/{{inventory_hostname}}_final.eos"
+          state: absent
+            
+      - name: Generate management configuration
+        template:
+          src: "{{lookup('env','PWD')}}/templates/mgmt_interfaces.j2"
+          dest: "{{lookup('env','PWD')}}/configs/{{ inventory_hostname }}/{{ inventory_hostname }}_mgmt.eos"
+      - name: Generate configuration
+        template:
+          src: "{{lookup('env','PWD')}}/templates/interfaces.j2"
+          dest: "{{lookup('env','PWD')}}/configs/{{ inventory_hostname }}/{{ inventory_hostname }}_interfaces.eos"
+      - name: Copy ATD_Base
+        copy:
+          src: "{{lookup('env','PWD')}}/configs/Static/ATD-INFRA.cfg"
+          dest: "{{lookup('env','PWD')}}/configs/{{inventory_hostname}}/{{inventory_hostname}}_ATD_BASE.cfg"
+
+  - hosts: spines_DC1
+    name: Generate all spine specific configs
+    tasks:
+      - name: Register variables (underlay)
+        include_vars:
+          file: "{{lookup('env','PWD')}}/vars/underlay.yml"
+          name: underlay
+      - name: Generate spine underlay
+        template:
+          src: "{{lookup('env','PWD')}}/templates/underlay_spines.j2"
+          dest: "{{lookup('env','PWD')}}/configs/{{inventory_hostname}}/{{inventory_hostname}}_underlay.eos"
+  - hosts: left_leafs_DC1
+    name: Copy MLAG Left
+    tasks: 
+      - name: Copy MLAG
+        copy:
+          src: "{{lookup('env','PWD')}}/configs/Static/MLAG-Left.eos"
+          dest: "{{lookup('env','PWD')}}/configs/{{inventory_hostname}}/MLAG-Left.eos"
+  - hosts: right_leafs_DC1
+    name: Copy MLAG Right
+    tasks: 
+      - name: Copy MLAG
+        copy:
+          src: "{{lookup('env','PWD')}}/configs/Static/MLAG-Right.eos"
+          dest: "{{lookup('env','PWD')}}/configs/{{inventory_hostname}}/MLAG-Right.eos"
+
+  - hosts: leafs_DC1
+    name: Generate all leaf specific configs
+    tasks:
+      - name: Register variables (underlay)
+        include_vars:
+          file: "{{lookup('env','PWD')}}/vars/underlay.yml"
+          name: underlay
+      - name: Register variables (VXLAN)
+        include_vars:
+          file: "{{lookup('env','PWD')}}/vars/VXLAN.yml"
+          name: VXLAN
+      - name: Generate leaf underlay
+        template:
+          src: "{{lookup('env','PWD')}}/templates/underlay_leafs.j2"
+          dest: "{{lookup('env','PWD')}}/configs/{{inventory_hostname}}/{{inventory_hostname}}_underlay.eos"
+      - name: Create VXLAN Overlay Tenant configs 
+        template: # This is Jinja right here, and we pass "vars" into Jinja
+          src: "{{lookup('env','PWD')}}/templates/VXLAN.j2"
+          dest: "{{lookup('env','PWD')}}/configs/{{inventory_hostname}}/{{inventory_hostname}}_VXLAN.eos"
+  - hosts: DC1
+    name: Assemble configurations and upload them
+    tasks:
+      - name: Assemble configurations
+        assemble:
+          src: "{{lookup('env','PWD')}}/configs/{{inventory_hostname}}/"
+          dest: "{{lookup('env','PWD')}}/configs/{{inventory_hostname}}/{{inventory_hostname}}_final.eos"
+      - name: Upload config
+        eos_config:
+          src: "{{lookup('env','PWD')}}/configs/{{inventory_hostname}}/{{inventory_hostname}}_final.eos"
+          replace: config    
+          save_when: always
+  
+
+             

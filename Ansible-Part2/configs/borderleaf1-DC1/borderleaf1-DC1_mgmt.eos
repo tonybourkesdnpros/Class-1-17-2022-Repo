@@ -1,0 +1,4 @@
+interface management0
+  ip address 192.168.0.25/24
+
+hostname borderleaf1-DC1

@@ -1,0 +1,6 @@
+Hosts:
+  ESXi-1:
+    leafs: "leaf1, leaf2"
+    interfaces: "Ethernet1, Ethernet2"
+    VLANs: "101, 103, 105"
+

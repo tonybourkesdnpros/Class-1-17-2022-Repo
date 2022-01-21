@@ -1,5 +1,5 @@
 ---
-  - hosts: spine1-DC1
+  - hosts: leafs_DC1, leafs_DC2, spines_DC1, spines_DC2
     name: Add SSH key and user
     tasks: 
     - name: Add user
@@ -9,8 +9,8 @@
         privilege: 15
         role: network-admin
         state: present
-    # - name: Add SSH key
-    #   eos_user:
-    #     name: automator
-    #     sshkey: "{{ lookup('file', '~/project/persist/SSH/AutomationKey.public') }}"
-    #     state: present
+    - name: Add SSH key
+      eos_user:
+        name: automator
+        sshkey: "{{ lookup('file', '~/project/persist/SSH/AutomationKey.public') }}"
+        state: absent

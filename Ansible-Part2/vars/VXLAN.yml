@@ -57,11 +57,7 @@ Tenants:
   Lime: 
     L3VNI: 60000
     L2VNI:
-      DMZ:
-        VNID: 60001
-        VLANID: 601
-        SVI: 10.60.1.1/24
-      Backup:
-        VNID: 60002
-        VLANID: 602
-        SVI: 10.60.202.1/24      
+      New:
+        VNID: 60005
+        VLANID: 605
+        SVI: 10.65.202.1/24      

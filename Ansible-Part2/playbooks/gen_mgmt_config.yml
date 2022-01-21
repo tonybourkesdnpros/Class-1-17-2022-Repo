@@ -1,5 +1,5 @@
 ---
-  - hosts: leaf1-DC1
+  - hosts: leafs_DC1, leafs_DC2, spines_DC1, spines_DC2
     name: Generate management interface configuration for devices
     tasks:
       - name: Load variables into Ansible/Jinja Dictionary
@@ -9,7 +9,7 @@
       - name: Generate configuration
         template:
           src: "{{lookup('env','PWD')}}/templates/mgmt_interfaces.j2"
-          dest: "{{lookup('env','PWD')}}/configs/{{ inventory_hostname }}_mgmt.eos"
+          dest: "{{lookup('env','PWD')}}/configs/{{ inventory_hostname }}/{{ inventory_hostname }}_mgmt.eos"
 
 
 

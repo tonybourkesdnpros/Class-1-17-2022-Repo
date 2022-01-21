@@ -1,0 +1,4 @@
+interface management0
+  ip address 192.168.0.22/24
+
+hostname leaf2-DC1
